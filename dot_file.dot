@@ -1,0 +1,4 @@
+digraph data{
+rankdir = TB;
+node000001eaa7e76130[ shape = record, style = bold, color = "#580612", label = " {<f0> NODE10(000001eaa7e76130) | <f1> TYPE 1 | <f2> value =3.000000 | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
+}
