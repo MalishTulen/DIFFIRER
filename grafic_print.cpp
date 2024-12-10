@@ -69,7 +69,7 @@ errors_t make_picture ( const char* dot_file, const char* output_file, int* amou
     sprintf ( cmd_command, "dot %s -T png -o %s%d.png", dot_file, output_file, *amount_of_pictures );
 
     ( *amount_of_pictures )++;
-    fprintf ( stderr, "command = '%s'\n", cmd_command );
+    //fprintf ( stderr, "command = '%s'\n", cmd_command );
     system ( cmd_command );
 
     return DONE;

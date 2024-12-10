@@ -58,6 +58,18 @@ fprintf ( stderr, "READFILE3\n" );
 fprintf ( stderr, "IMPROOVED!\n" );
     make_grafic_dump ( tree, amount_of_pictures );
 
+    get_string ( tree );
+
+
+    differer ( tree );
+
+    improover_of_expression ( tree );
+fprintf ( stderr, "DIFFERING!\n" );
+
+    make_grafic_dump ( tree, amount_of_pictures );
+
+    get_string ( tree );
+
     return DONE;
 }
 
@@ -304,7 +316,7 @@ errors_t improover_of_expression ( tree_t* tree )
 
         improver_of_node ( tree->g_root, &amount_of_improves );
 
-        printf ( "amount of improves: %d\n", amount_of_improves );
+        //printf ( "amount of improves: %d\n", amount_of_improves );
 
         if ( amount_of_improves == 0 )
             improving = 0;
@@ -320,13 +332,13 @@ node_t* improver_of_node ( node_t* node, int* amount_of_improves )
 
     if ( node->left != NULL )
     {
-fprintf ( stderr, "IMPR1\n");
+//fprintf ( stderr, "IMPR1\n");
         left_operand = improver_of_node ( node->left, amount_of_improves );
     }
 
     if ( node->right != NULL )
     {
-fprintf ( stderr, "IMPR2\n");
+//fprintf ( stderr, "IMPR2\n");
         right_operand = improver_of_node ( node->right, amount_of_improves );
     }
 
@@ -358,8 +370,6 @@ double get_value ( double left, double right, operations_t operation )
             return left-right;
         case MUL:
             return left*right;
-        case DIV:
-            return left/right;
         case POISON_OPERATION:
             printf ( "POISON OPERATION!\n");
             break;
@@ -371,6 +381,108 @@ double get_value ( double left, double right, operations_t operation )
 
     return POISON_VALUE;
 }
+
+errors_t differer ( tree_t* tree )
+{
+    differenciation ( tree->g_root );
+
+    return DONE;
+}
+
+node_t* differenciation ( node_t* node )
+{
+    int type = node->type;
+    if ( type == NUM )
+    {
+        node->object.constant = 0;
+        return node;
+    }
+    else if ( type == VAR )
+    {
+        node->type = NUM;
+        node->object.constant = 1;
+        return node;
+    }
+    else if ( type == OP )
+    {
+        switch ( node->object.operation )
+        {
+            case ADD:
+                differenciation ( node->left );
+                differenciation ( node->right );
+                break;
+            case SUB:
+                differenciation ( node->left );
+                differenciation ( node->right );
+                break;
+
+            default:
+                printf ( "ERROR IN DIFF!\nBAD_VALUE(%d)", node->object.operation );
+        }
+    }
+
+    return ( node_t* ) POISON_PTR;
+}
+
+errors_t get_string ( tree_t* tree )
+{
+    printf ( "Current expression: " );
+    get_symbol ( tree->g_root );
+    printf ( "\n" );
+
+    return DONE;
+}
+
+node_t* get_symbol ( node_t* node )
+{
+    if ( node->type == NUM )
+        printf ( "%.3lf", node->object.constant );
+    else if ( node->type == VAR )
+        printf ( "%c", node->object.var );
+    else if ( node->type == OP )
+    {
+        printf ( "( " );
+
+        if ( node->left != NULL )
+            get_symbol ( node->left );
+
+        printf_operation ( node );
+
+        printf ( " )" );
+    }
+
+    return node;
+}
+
+errors_t printf_operation ( node_t* node )
+{
+    switch ( node->object.operation )
+    {
+        case ADD:
+            printf ( "+" );
+            get_symbol ( node->right );
+            break;
+        case SUB:
+            printf ( "-" );
+            get_symbol ( node->right );
+            break;
+        case MUL:
+            printf ( "*" );
+            get_symbol ( node->right );
+            break;
+        case DIV:
+            printf ( "/" );
+            get_symbol ( node->right );
+            break;
+
+        default:
+            printf ( "ERROR!\n");
+            break;
+    }
+
+    return DONE;
+}
+
 errors_t array_dump ( tree_t* tree )
 {
     printf ( "************\nHUI TIGRA\n" );

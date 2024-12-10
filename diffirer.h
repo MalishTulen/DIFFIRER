@@ -39,6 +39,12 @@ enum operations_t
     SUB               = 2,
     MUL               = 3,
     DIV               = 4,
+    EXP               = 5,
+    SQR               = 6,
+    SIN               = 7,
+    COS               = 8,
+    TG                = 9,
+    CTG               = 10,
 
 };
 
@@ -134,5 +140,10 @@ errors_t improover_of_expression ( tree_t* ptr_tree );
 node_t*  improver_of_node   ( node_t* node, int* amount_of_improves );
 errors_t delete_node        ( node_t* node );
 double   get_value          ( double left, double right, operations_t operation );
+errors_t differer ( tree_t* tree );
+node_t* differenciation ( node_t* node );
+errors_t get_string ( tree_t* tree );
+node_t* get_symbol ( node_t* node );
+errors_t printf_operation ( node_t* node );
 
 #endif
