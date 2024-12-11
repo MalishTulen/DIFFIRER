@@ -8,6 +8,7 @@
 
 #include "diffirer.h"
 #include "grafic_print.h"
+#include "rek_spusk.h"
 
 errors_t start_programm ()
 {
@@ -62,8 +63,8 @@ fprintf ( stderr, "IMPROOVED!\n" );
 
 
     differer ( tree );
-
     improover_of_expression ( tree );
+
 fprintf ( stderr, "DIFFERING!\n" );
 
     make_grafic_dump ( tree, amount_of_pictures );
@@ -77,6 +78,8 @@ errors_t tree_ctor ( tree_t* tree )
 {
     tree->array_data = ( node_t* ) calloc ( DATA_CAPACITY, sizeof ( node_t ) );
     tree->vars_array = ( char* ) calloc ( VARS_ARRAY_CAPACITY, sizeof ( char ) );
+    tree->operators_array = "+-*/";
+
     tree->size = 0;
 
     for ( int i = 0; i < DATA_CAPACITY; i++ )
@@ -173,138 +176,6 @@ errors_t delete_node ( node_t* node )
     return DONE;
 }
 
-errors_t create_tree_from_input_data_mega_gay_porno_huli_takoe_dlinnoye_imya_adolf_hitler ( input_file_t* input_data, tree_t* tree )
-{
-    int p = 0;
-    tree->g_root = get_g ( input_data, tree, &p );
-    array_dump ( tree );
-
-    return DONE;
-}
-
-node_t* get_g ( input_file_t* input_data, tree_t* tree, int* p )
-{
-    node_t* value = get_e ( input_data, tree, p );
-    char* daata = input_data->data;
-fprintf ( stderr, "Gsimbol = %c\n", daata [ *p ] );
-
-
-    if ( daata [ *p ] != '$' )
-    {
-        SYNTAX_ERROR ( input_data->data, p );
-    }
-    (*p)++;
-
-    return value;
-}
-
-node_t* get_e ( input_file_t* input_data, tree_t* tree, int* p )
-{
-    char* daata = input_data->data;
-    node_t* value = get_t ( input_data, tree, p );
-fprintf ( stderr, "Esimbol = %c\n", daata [ *p ] );
-
-
-    if ( ( daata [ *p ] == '+' ) || ( daata [ *p ] == '-' ) )
-    {
-        (*p)++;
-        node_t* value2 = get_t ( input_data, tree, p );
-
-        if ( daata [ *p ] == '+' )
-        {
-            return create_new_node ( tree, OP, {.operation = ADD}, value, value2 );
-        }
-        else
-            return create_new_node ( tree, OP, {.operation = SUB}, value, value2 );
-
-    }
-
-    return value;
-}
-
-node_t* get_t ( input_file_t* input_data, tree_t* tree, int* p )
-{
-    char* daata = input_data->data;
-    node_t* value = get_p ( input_data, tree, p );
-
-fprintf ( stderr, "Tsimbol = %c\n", daata [ *p ] );
-
-    if ( daata [ *p ] == '*' || daata [ *p ] == '/' )
-    {
-        (*p)++;
-        node_t* value2 = get_p ( input_data, tree, p );
-
-        if ( daata [ *p ] == '*' )
-            return create_new_node ( tree, OP, {.operation = MUL}, value, value2 );
-        else
-            return create_new_node ( tree, OP, {.operation = DIV}, value, value2 );
-    }
-
-    return value;
-}
-
-node_t* get_p ( input_file_t* input_data, tree_t* tree, int* p )
-{
-    char* daata = input_data->data;
-fprintf ( stderr, "Psimbol = %c\n", daata [ *p ] );
-
-    if ( daata [ *p ] == '(' )
-    {
-        (*p)++;
-        node_t* value = get_e ( input_data, tree, p );
-
-//fprintf ( stderr, "simbol = %c\n", daata [ *p ] );
-
-        if ( daata [ *p ] != ')' )
-        {
-            SYNTAX_ERROR ( input_data->data, p );
-        }
-        (*p)++;
-        return value;
-    }
-    else
-        return get_n ( input_data, tree, p );
-}
-
-node_t* get_n ( input_file_t* input_data, tree_t* tree, int* p )
-{
-    int old_p = *p;
-    int num_checker = 0;
-    object_t value = {};
-    char* daata = input_data->data;
-fprintf ( stderr, "Nsimbol = %c\n", daata [ *p ] );
-
-
-    if ( '0' <= daata [ *p ] && daata [ *p ] <= '9' )
-    {
-        num_checker = 1;
-        while ( '0' <= daata [ *p ] && daata [ *p ] <= '9' )
-        {
-    fprintf ( stderr, "Nsimbol = %c\n", daata [ *p ] );
-            value.constant = value.constant * 10 + ( daata [ *p ] - '0' );
-            (*p)++;
-        }
-    }
-    else if ( ( isalpha ( daata [ *p ])) != 0 )
-    {
-        value.var = daata [ *p ];
-        (*p)++;
-    }
-
-
-    if ( old_p != *p )
-    {
-        if ( num_checker == 1)
-            return create_new_node ( tree, NUM, value, NULL, NULL );
-        else
-            return create_new_node ( tree, VAR, value, NULL, NULL );
-    }
-    else
-    {
-        SYNTAX_ERROR ( input_data->data, p );
-    }
-}
-
 errors_t improover_of_expression ( tree_t* tree )
 {
     int improving = 1;
@@ -384,12 +255,12 @@ double get_value ( double left, double right, operations_t operation )
 
 errors_t differer ( tree_t* tree )
 {
-    differenciation ( tree->g_root );
+    differenciation ( tree, tree->g_root );
 
     return DONE;
 }
 
-node_t* differenciation ( node_t* node )
+node_t* differenciation ( tree_t* tree, node_t* node )
 {
     int type = node->type;
     if ( type == NUM )
@@ -405,16 +276,70 @@ node_t* differenciation ( node_t* node )
     }
     else if ( type == OP )
     {
+fprintf ( stderr, "operation: %d\n", node->object.operation );
         switch ( node->object.operation )
         {
             case ADD:
-                differenciation ( node->left );
-                differenciation ( node->right );
+                differenciation ( tree, node->left );
+                differenciation ( tree, node->right );
                 break;
             case SUB:
-                differenciation ( node->left );
-                differenciation ( node->right );
+                differenciation ( tree, node->left );
+                differenciation ( tree, node->right );
                 break;
+            case MUL:
+            {
+                node_t* left_no_diff = node->left;
+                node_t* right_no_diff = node->right;
+                node_t* copy_left = copy_sons_balls ( tree, node->left );
+                node_t* copy_right = copy_sons_balls ( tree, node->right );
+                differenciation ( tree, copy_left );
+                differenciation ( tree, copy_right );
+
+                node->object.operation = ADD;
+                node->left = create_new_node ( tree, OP, {.operation = MUL}, copy_left, right_no_diff );
+                node->right = create_new_node ( tree, OP, {.operation = MUL}, left_no_diff, copy_right );
+
+//array_dump ( tree, copy_left );
+//array_dump ( tree, copy_right );
+/*array_dump ( tree, left_no_diff );
+array_dump ( tree, right_no_diff );
+fprintf ( stderr, "node = %p\n", node );
+fprintf ( stderr, "node->left = %p\n", node->left );
+fprintf ( stderr, "node->right = %p\n", node->right );
+
+fprintf ( stderr, "node->left->left = %p\n", node->right->right );
+
+fprintf ( stderr, "node->right->left = %p\n", node->right->left );
+fprintf ( stderr, "left no diff = %p\n", left_no_diff );
+fprintf ( stderr, "node->right->right = %p\n", node->left->right );
+fprintf ( stderr, "copyright = %p\n", copy_right );
+fprintf ( stderr, "right no diff = %p\n", right_no_diff );
+
+
+
+array_dump ( tree, node->left );
+array_dump ( tree, node->right );
+*/
+//array_dump ( tree, node );
+
+                break;
+            }
+
+            case DIV:
+            {
+                node_t* left_no_diff = node->left;
+                node_t* right_no_diff = node->right;
+                node_t* copy_left = copy_sons_balls ( tree, node->left );
+                node_t* copy_right = copy_sons_balls ( tree, node->right );
+                differenciation ( tree, copy_left );
+                differenciation ( tree, copy_right );
+
+                node->object.operation = DIV;
+                node->left = create_new_node ( tree, OP, {.operation = SUB}, create_new_node( tree, OP, {.operation = MUL}, copy_left, node->right ), create_new_node ( tree, OP, {.operation = MUL}, copy_right, node->left ) );
+                node->right = create_new_node ( tree, OP, {.operation = MUL}, node->right, node->right );
+                break;
+            }
 
             default:
                 printf ( "ERROR IN DIFF!\nBAD_VALUE(%d)", node->object.operation );
@@ -424,6 +349,16 @@ node_t* differenciation ( node_t* node )
     return ( node_t* ) POISON_PTR;
 }
 
+node_t* copy_sons_balls ( tree_t* tree, node_t* node )
+{
+    node_t* new_node = create_new_node ( tree, node->type, node->object, NULL, NULL );
+    if ( node->left != NULL )
+        new_node->left = copy_sons_balls ( tree, node->left );
+    if ( node->right != NULL )
+        new_node->right = copy_sons_balls ( tree, node->right );
+
+    return new_node;
+}
 errors_t get_string ( tree_t* tree )
 {
     printf ( "Current expression: " );
@@ -483,25 +418,25 @@ errors_t printf_operation ( node_t* node )
     return DONE;
 }
 
-errors_t array_dump ( tree_t* tree )
+errors_t array_dump ( tree_t* tree, node_t* node )
 {
-    printf ( "************\nHUI TIGRA\n" );
-
-    for ( int i = 0; i < DATA_CAPACITY; i++ )
+    if ( node->type == NUM )
+        printf ( "node: type = NUM, value = %.3lf\n", node->object.constant );
+    else if ( node->type == VAR )
+        printf ( "node: type = VAR, value = %c\n", node->object.var );
+    else if ( node->type == OP )
     {
-        printf ( "node%d\n type = %d\n value = ", i+1, tree->array_data [ i ].type );
+        printf ( "( \n" );
 
-        if ( tree->array_data [ i ].type == NUM )
-            printf ( "%lf\n", tree->array_data [ i ].object.constant );
-        else if ( tree->array_data [ i ].type == OP )
-            printf ( "%d\n", tree->array_data [ i ].object.operation );
-        else if ( tree->array_data [ i ].type == VAR )
-            printf ( "%c\n", tree->array_data [ i ].object.var );
-        else if ( tree->array_data [ i ].type == POISON_TYPE )
-            printf ( "NONE:)\n" );
+        if ( node->left != NULL )
+            array_dump ( tree, node->left );
 
+        printf ( "node: type = %d, value = %c\n", node->type, tree->operators_array [ node->object.operation - 1 ] );
+
+        if ( node->right != NULL )
+            array_dump ( tree, node->right );
+        printf ( " )\n" );
     }
-    printf ( "#####################\n" );
 
     return DONE;
 }
