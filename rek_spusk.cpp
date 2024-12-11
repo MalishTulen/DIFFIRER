@@ -60,7 +60,7 @@ fprintf ( stderr, "MINUS\n" );
 node_t* get_t ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-    node_t* value = get_p ( input_data, tree, p );
+    node_t* value = get_h ( input_data, tree, p );
     int index = *p;
 
 //fprintf ( stderr, "Tsimbol = %c\n", daata [ *p ] );
@@ -68,7 +68,7 @@ node_t* get_t ( input_file_t* input_data, tree_t* tree, int* p )
     if ( ( daata [ index ] == tree->operators_array [ 2 ] ) || ( daata [ index ] == tree->operators_array [ 3 ] ) )
     {
         (*p)++;
-        node_t* value2 = get_p ( input_data, tree, p );
+        node_t* value2 = get_h ( input_data, tree, p );
 
         if ( daata [ index ] == tree->operators_array [ 3 ] )
             return create_new_node ( tree, OP, {.operation = DIV}, value, value2 );
@@ -79,32 +79,28 @@ node_t* get_t ( input_file_t* input_data, tree_t* tree, int* p )
     return value;
 }
 
-/*node_t* get_h ( input_file_t* input_data, tree_t* tree, int* p )
+node_t* get_h ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
+    node_t* value = get_p ( input_data, tree, p );
 fprintf ( stderr, "Psimbol = %c\n", daata [ *p ] );
 
-    if ( daata [ *p ] == '^' || daata [ *p ] == 's' )
+    if ( daata [ *p ] == tree->operators_array[ 4 ] || daata [ *p ] == tree->operators_array [ 5 ] )
     {
         (*p)++;
-        node_t* value2 = get_e ( input_data, tree, p );
+        node_t* value2 = get_p ( input_data, tree, p );
 
-        if ( daata [ *p ] == '^' )
-            return create_new_node ( tree, OP, {.operation = SQR },  )
-
-
-
-
-
-        (*p)++;
-        node_t* value = get_e ( input_data, tree, p );
+        if ( daata [ *p ] == tree->operators_array [ 4 ] )
+            return create_new_node ( tree, OP, {.operation = EXP }, value, value2 );
+        else
+            return create_new_node ( tree, OP, {.operation = SQR }, value, value2 );
 
 //fprintf ( stderr, "simbol = %c\n", daata [ *p ] );
 
     }
-    else
-        return get_p ( input_data, tree, p );
-}*/
+
+    return value;
+}
 
 node_t* get_p ( input_file_t* input_data, tree_t* tree, int* p )
 {

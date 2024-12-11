@@ -2,13 +2,14 @@
 #define DIFFIRER_HEADER
 
 
-const int       POISON_VALUE        = -66;
-const int       MAX_NAME_LEN        = 30;
-const int       DATA_CAPACITY       = 300;
-const int       MAX_INPUT_LENGTH    = 50;
-const int       CMD_COMMAND_LEN     = 50;
-const int       VARS_ARRAY_CAPACITY = 20;
-const long long POISON_PTR          = 0xD01BAEB7;
+const int               POISON_VALUE        = -66;
+const int               MAX_NAME_LEN        = 30;
+const int               DATA_CAPACITY       = 300;
+const int               MAX_INPUT_LENGTH    = 50;
+const int               CMD_COMMAND_LEN     = 50;
+const int               VARS_ARRAY_CAPACITY = 20;
+const long long         POISON_PTR          = 0xD01BAEB7;
+const long double       EPCILON             = 0.000000001;
 
 enum errors_t
 {
@@ -133,6 +134,7 @@ node_t*  create_new_node    ( tree_t* ptr_tree, type_t type, object_t object, no
 errors_t array_dump         ( tree_t* tree, node_t* node );
 errors_t improover_of_expression ( tree_t* ptr_tree );
 node_t*  improver_of_node   ( node_t* node, int* amount_of_improves );
+errors_t delete_sub_tree    ( node_t* node );
 errors_t delete_node        ( node_t* node );
 double   get_value          ( double left, double right, operations_t operation );
 errors_t differer           ( tree_t* tree );

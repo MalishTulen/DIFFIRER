@@ -63,6 +63,9 @@ fprintf ( stderr, "IMPROOVED!\n" );
 
 
     differer ( tree );
+
+    make_grafic_dump ( tree, amount_of_pictures );
+
     improover_of_expression ( tree );
 
 fprintf ( stderr, "DIFFERING!\n" );
@@ -78,7 +81,7 @@ errors_t tree_ctor ( tree_t* tree )
 {
     tree->array_data = ( node_t* ) calloc ( DATA_CAPACITY, sizeof ( node_t ) );
     tree->vars_array = ( char* ) calloc ( VARS_ARRAY_CAPACITY, sizeof ( char ) );
-    tree->operators_array = "+-*/";
+    tree->operators_array = "+-*/^s";
 
     tree->size = 0;
 
@@ -160,22 +163,33 @@ node_t* create_new_node ( tree_t* tree, type_t type, object_t value, node_t* lef
     return &tree->array_data [ tree->size++ ];
 }
 
-errors_t delete_node ( node_t* node )
+errors_t delete_sub_tree ( node_t* node )
 {
-    if ( !node )
-    {
-        printf ( "BAD_PTR\n" );
-        return BAD_PTR;
-    }
+    if ( node->left != NULL )
+        delete_sub_tree ( node->left );
+    if ( node->right != NULL )
+        delete_sub_tree ( node->right );
 
-    node->left = ( node_t* ) POISON_PTR;
-    node->right = ( node_t* ) POISON_PTR;
-    node->type = POISON_TYPE;
-    node->object.constant = POISON_VALUE;
+    delete_node ( node );
 
     return DONE;
 }
 
+errors_t delete_node ( node_t* node )
+{
+    if ( node->type == NUM )
+        node->object.constant = POISON_VALUE;
+    else if ( node->type == OP )
+        node->object.operation = POISON_OPERATION;
+    else if ( node->type == VAR )
+        node->object.var = 0;
+
+    node->type = POISON_TYPE;
+    node->left = ( node_t* ) POISON_PTR;
+    node->right = ( node_t* ) POISON_PTR;
+
+    return DONE;
+}
 errors_t improover_of_expression ( tree_t* tree )
 {
     int improving = 1;
@@ -213,20 +227,105 @@ node_t* improver_of_node ( node_t* node, int* amount_of_improves )
         right_operand = improver_of_node ( node->right, amount_of_improves );
     }
 
+    if ( node->object.operation == MUL )
+    {
+        if ( abs ( node->left->object.constant ) < EPCILON || abs ( node->right->object.constant ) < EPCILON )
+        {
+fprintf ( stderr, "MUL NA ZERO\n" );
+            node_t* left_son = node->left;
+            node_t* right_son = node->right;
+
+            (*amount_of_improves)++;
+            node->type = NUM;
+            node->object.constant = 0;
+            node->left = NULL;
+            node->right = NULL;
+            delete_sub_tree ( left_son );
+            delete_sub_tree ( right_son );
+        }
+        else if ( abs ( node->right->object.constant - 1 ) < EPCILON )
+        {
+fprintf ( stderr, "MUL NA ODIN (R)\n" );
+            node_t* left_son = node->left;
+            node_t* right_son = node->right;
+
+            (*amount_of_improves)++;
+            node->type = node->left->type;
+            node->object = node->left->object;
+            node->right = node->left->right;
+            node->left = node->left->left;
+
+            delete_node ( left_son );
+            delete_node ( right_son );
+        }
+        else if ( abs ( node->left->object.constant - 1 ) < EPCILON )
+        {
+fprintf ( stderr, "MUL NA ODIN (L)\n" );
+            node_t* left_son = node->left;
+            node_t* right_son = node->right;
+
+            (*amount_of_improves)++;
+            node->type = node->right->type;
+            node->object = node->right->object;
+            node->left = node->right->left;
+            node->right = node->right->right;
+fprintf ( stderr, "BALLS1\n" );
+            delete_node ( left_son );
+            delete_node ( right_son );
+fprintf ( stderr, "BALLS2\n" );
+        }
+    }
+    else if ( node->object.operation == ADD || node->object.operation == SUB )
+    {
+        if ( abs ( node->left->object.constant ) < EPCILON )
+        {
+fprintf ( stderr, "SUM ZERO (L)\n" );
+            node_t* left_son = node->left;
+            node_t* right_son = node->right;
+
+            (*amount_of_improves)++;
+            node->type = node->right->type;
+            node->object = node->right->object;
+            node->left = node->right->left;
+            node->right = node->right->right;
+
+            delete_node ( left_son );
+            delete_node ( right_son );
+        }
+        else if ( abs ( node->right->object.constant ) < EPCILON )
+        {
+fprintf ( stderr, "SUM ZERO (R)\n" );
+            node_t* left_son = node->left;
+            node_t* right_son = node->right;
+
+            (*amount_of_improves)++;
+            node->type = node->left->type;
+            node->object = node->left->object;
+            node->right = node->left->right;
+            node->left = node->left->left;
+
+fprintf ( stderr, "MAIN BALLS1\n" );
+            delete_node ( left_son );
+            delete_node ( right_son );
+fprintf ( stderr, "MAIN BALLS2\n" );
+        }
+    }
+
     if ( left_operand != NULL && left_operand->type == NUM && right_operand != NULL && right_operand->type == NUM )
     {
         (*amount_of_improves)++;
         double left_value = left_operand->object.constant;
         double right_value = right_operand->object.constant;
 
-        delete_node ( left_operand );
-        delete_node ( right_operand );
+        delete_sub_tree ( left_operand );
+        delete_sub_tree ( right_operand );
 
         node->type = NUM;
         node->object.constant = get_value ( left_value, right_value, node->object.operation );
         node->left = NULL;
         node->right = NULL;
     }
+
 
     return node;
 }
@@ -328,16 +427,15 @@ array_dump ( tree, node->right );
 
             case DIV:
             {
-                node_t* left_no_diff = node->left;
-                node_t* right_no_diff = node->right;
                 node_t* copy_left = copy_sons_balls ( tree, node->left );
                 node_t* copy_right = copy_sons_balls ( tree, node->right );
+                node_t* copy_for_denominator = copy_sons_balls ( tree, node->right );
                 differenciation ( tree, copy_left );
                 differenciation ( tree, copy_right );
 
                 node->object.operation = DIV;
                 node->left = create_new_node ( tree, OP, {.operation = SUB}, create_new_node( tree, OP, {.operation = MUL}, copy_left, node->right ), create_new_node ( tree, OP, {.operation = MUL}, copy_right, node->left ) );
-                node->right = create_new_node ( tree, OP, {.operation = MUL}, node->right, node->right );
+                node->right = create_new_node ( tree, OP, {.operation = EXP}, copy_for_denominator, create_new_node ( tree, NUM, {.constant = 2}, NULL, NULL ) );
                 break;
             }
 
@@ -409,6 +507,15 @@ errors_t printf_operation ( node_t* node )
             printf ( "/" );
             get_symbol ( node->right );
             break;
+        case EXP:
+            printf ( "^" );
+            get_symbol ( node->right );
+            break;
+        case SQR:
+            printf ( "sqrt" );
+            get_symbol ( node->right );
+            break;
+
 
         default:
             printf ( "ERROR!\n");

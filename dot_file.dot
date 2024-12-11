@@ -1,26 +1,20 @@
 digraph data{
 rankdir = TB;
-node0000019374496010[ shape = record,style = bold, color = "#5b63e0", penwidth = 2.0, label = " {<f0> NODE0(0000019374496010) | <f1> TYPE 3 | <f2> value =x | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
-node0000019374496030[ shape = record, style = bold, color = "#580612", label = " {<f0> NODE1(0000019374496030) | <f1> TYPE 1 | <f2> value =5.000000 | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
-node0000019374496050[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE2(0000019374496050) | <f1> TYPE 2 | <f2> value = 1 | { <f3> LEFT ( 0000019374496010 ) | <f4> RIGHT ( 0000019374496030 ) } } "];
-node0000019374496070[ shape = record,style = bold, color = "#5b63e0", penwidth = 2.0, label = " {<f0> NODE3(0000019374496070) | <f1> TYPE 3 | <f2> value =x | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
-node0000019374496090[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE4(0000019374496090) | <f1> TYPE 2 | <f2> value = 4 | { <f3> LEFT ( 0000019374496170 ) | <f4> RIGHT ( 0000019374496190 ) } } "];
-node00000193744960b0[ shape = record, style = bold, color = "#580612", label = " {<f0> NODE5(00000193744960b0) | <f1> TYPE 1 | <f2> value =1.000000 | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
-node0000019374496110[ shape = record, style = bold, color = "#580612", label = " {<f0> NODE8(0000019374496110) | <f1> TYPE 1 | <f2> value =1.000000 | { <f3> LEFT ( 0000000000000000 ) | <f4> RIGHT ( 0000000000000000 ) } } "];
-node0000019374496130[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE9(0000019374496130) | <f1> TYPE 2 | <f2> value = 3 | { <f3> LEFT ( 0000019374496110 ) | <f4> RIGHT ( 0000019374496050 ) } } "];
-node0000019374496150[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE10(0000019374496150) | <f1> TYPE 2 | <f2> value = 3 | { <f3> LEFT ( 00000193744960b0 ) | <f4> RIGHT ( 0000019374496070 ) } } "];
-node0000019374496170[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE11(0000019374496170) | <f1> TYPE 2 | <f2> value = 2 | { <f3> LEFT ( 0000019374496150 ) | <f4> RIGHT ( 0000019374496130 ) } } "];
-node0000019374496190[ shape = record,style = bold, color = "#09752e", label = " {<f0> NODE12(0000019374496190) | <f1> TYPE 2 | <f2> value = 3 | { <f3> LEFT ( 0000019374496070 ) | <f4> RIGHT ( 0000019374496070 ) } } "];
-node0000019374496090:<f3>->node0000019374496170
-node0000019374496170:<f3>->node0000019374496150
-node0000019374496150:<f3>->node00000193744960b0
-node0000019374496150:<f4>->node0000019374496070
-node0000019374496170:<f4>->node0000019374496130
-node0000019374496130:<f3>->node0000019374496110
-node0000019374496130:<f4>->node0000019374496050
-node0000019374496050:<f3>->node0000019374496010
-node0000019374496050:<f4>->node0000019374496030
-node0000019374496090:<f4>->node0000019374496190
-node0000019374496190:<f3>->node0000019374496070
-node0000019374496190:<f4>->node0000019374496070
+node00000125cb726010[ shape = record,style = bold, color = "#5b63e0", penwidth = 2.0, label = " { <f2> x | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726030[ shape = record, style = bold, color = "#580612", label = " { <f2> 5.000000 | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726090[ shape = record,style = bold, color = "#09752e", label = " { <f2> / | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726130[ shape = record,style = bold, color = "#5b63e0", penwidth = 2.0, label = " { <f2> x | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726150[ shape = record,style = bold, color = "#09752e", label = " { <f2> + | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726170[ shape = record,style = bold, color = "#5b63e0", penwidth = 2.0, label = " { <f2> x | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726190[ shape = record,style = bold, color = "#09752e", label = " { <f2> - | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb7261b0[ shape = record, style = bold, color = "#580612", label = " { <f2> 2.000000 | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb7261d0[ shape = record,style = bold, color = "#09752e", label = " { <f2> ^ | { <f3> LEFT | <f4> RIGHT } } "];
+node00000125cb726090:<f3>->node00000125cb726190
+node00000125cb726190:<f3>->node00000125cb726170
+node00000125cb726190:<f4>->node00000125cb726150
+node00000125cb726150:<f3>->node00000125cb726010
+node00000125cb726150:<f4>->node00000125cb726030
+node00000125cb726090:<f4>->node00000125cb7261d0
+node00000125cb7261d0:<f3>->node00000125cb726130
+node00000125cb7261d0:<f4>->node00000125cb7261b0
 }

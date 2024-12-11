@@ -38,18 +38,18 @@ errors_t create_dot_code ( tree_t* ptr_data, FILE* ptr_dot_file )
             if ( checker_if_leaf == LEAF )
             {
                 if ( ptr_data->array_data [ i ].type == NUM )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = bold, color = \"#580612\", label = \" {<f0> NODE%d(%p) | <f1> TYPE %d | <f2> value =%lf | { <f3> LEFT ( %p ) | <f4> RIGHT ( %p ) } } \"];\n", &ptr_data->array_data[ i ], i, &ptr_data->array_data[ i ], ptr_data->array_data[ i ].type, ptr_data->array_data[ i ].object.constant, ptr_data->array_data[ i ].left, ptr_data->array_data[ i ].right );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = bold, color = \"#580612\", label = \" { <f2> %lf | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->array_data[ i ].object.constant );
                 if ( ptr_data->array_data [ i ].type == OP )
                     printf ( "Error in index %d: the tree ends with OP\n", i);
                 if ( ptr_data->array_data [ i ].type == VAR )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#5b63e0\", penwidth = 2.0, label = \" {<f0> NODE%d(%p) | <f1> TYPE %d | <f2> value =%c | { <f3> LEFT ( %p ) | <f4> RIGHT ( %p ) } } \"];\n", &ptr_data->array_data[ i ], i, &ptr_data->array_data[ i ], ptr_data->array_data[ i ].type, ptr_data->array_data[ i ].object.var, ptr_data->array_data[ i ].left, ptr_data->array_data[ i ].right );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#5b63e0\", penwidth = 2.0, label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->array_data[ i ].object.var );
             }
             if ( checker_if_leaf == NOT_LEAF )
             {
                 if ( ptr_data->array_data [ i ].type == NUM )
                     printf ( "Error in index %d: the tree ends with NUM\n", i);
                 if ( ptr_data->array_data [ i ].type == OP )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#09752e\", label = \" {<f0> NODE%d(%p) | <f1> TYPE %d | <f2> value = %d | { <f3> LEFT ( %p ) | <f4> RIGHT ( %p ) } } \"];\n", &ptr_data->array_data[ i ], i, &ptr_data->array_data[ i ], ptr_data->array_data[ i ].type, ptr_data->array_data[ i ].object.operation, ptr_data->array_data[ i ].left, ptr_data->array_data[ i ].right  );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#09752e\", label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->operators_array[ ptr_data->array_data[ i ].object.operation - 1 ] );
                 if ( ptr_data->array_data [ i ].type == VAR )
                     printf ( "Error in index %d: the tree ends with VAR\n", i);
             }
