@@ -6,10 +6,13 @@
 
 //#include "stack.h"
 #include "diffirer.h"
+#include "tree.h"
 #include "grafic_print.h"
 
 errors_t make_grafic_dump ( tree_t* ptr_data, int* amount_of_pictures )
 {
+    printf ( "GRAFIC_DUMP!\n" );
+
     CHECK ( ptr_data );
 
     const char  dot_file[] = "dot_file.dot";
@@ -17,48 +20,59 @@ errors_t make_grafic_dump ( tree_t* ptr_data, int* amount_of_pictures )
 
     FILE* ptr_dot_file = fopen ( "dot_file.dot", "w" );
 
-    create_dot_code ( ptr_data, ptr_dot_file );
+    fprintf ( ptr_dot_file, "digraph data{\n" );
+    fprintf ( ptr_dot_file, "rankdir = TB;\n" );
+
+    create_dot_code ( ptr_data->g_root, ptr_data, ptr_dot_file ); // TODO: create_node_data
+    branch_connector ( ptr_data->g_root, ptr_data, ptr_dot_file );
+    fprintf ( ptr_dot_file, "}\n" );
 
     fclose ( ptr_dot_file );
-
 
     make_picture ( dot_file, output_file, amount_of_pictures );
 
     return DONE;
 }
 
-errors_t create_dot_code ( tree_t* ptr_data, FILE* ptr_dot_file )
+// TODO: create_dot_file -> create_node_data, branch_connector
+
+// TODO: func create_node_data
+
+errors_t create_dot_code ( node_t* node, tree_t* ptr_data, FILE* ptr_dot_file )
 {
-    fprintf ( ptr_dot_file, "digraph data{\n" );
-    fprintf ( ptr_dot_file, "rankdir = TB;\n" );
-
-    for ( int i = 0; i < DATA_CAPACITY; i++ )
-    {
-        int checker_if_leaf = check_if_leaf ( &ptr_data->array_data[ i ] );
-            if ( checker_if_leaf == LEAF )
+    node_t* cur_symbol = node;
+    int checker_if_leaf = check_if_leaf ( cur_symbol );
+        if ( checker_if_leaf == LEAF )
+        {
+            if ( cur_symbol->type != POISON_TYPE )
             {
-                if ( ptr_data->array_data [ i ].type == NUM )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = bold, color = \"#580612\", label = \" { <f2> %lf | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->array_data[ i ].object.constant );
-                if ( ptr_data->array_data [ i ].type == OP )
-                    printf ( "Error in index %d: the tree ends with OP\n", i);
-                if ( ptr_data->array_data [ i ].type == VAR )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#5b63e0\", penwidth = 2.0, label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->array_data[ i ].object.var );
+                if ( cur_symbol->type == NUM ) // TODO: switch-case
+                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = bold, color = \"#580612\", label = \" { <f2> %lf | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.constant );
+                else if ( cur_symbol->type == OP )
+                    printf ( "Error in node %p : the tree ends with OP\n", node );
+                else if ( cur_symbol->type == VAR )
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#5b63e0\", penwidth = 2.0, label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.var );
             }
-            if ( checker_if_leaf == NOT_LEAF )
+        }
+        else if ( checker_if_leaf == NOT_LEAF )
+        {
+            if ( cur_symbol->type != POISON_TYPE )
             {
-                if ( ptr_data->array_data [ i ].type == NUM )
-                    printf ( "Error in index %d: the tree ends with NUM\n", i);
-                if ( ptr_data->array_data [ i ].type == OP )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#09752e\", label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", &ptr_data->array_data[ i ], ptr_data->operators_array[ ptr_data->array_data[ i ].object.operation - 1 ] );
-                if ( ptr_data->array_data [ i ].type == VAR )
-                    printf ( "Error in index %d: the tree ends with VAR\n", i);
+                if ( cur_symbol->type == NUM )
+                    printf ( "Error in node %p: the tree ends with NUM\n", node );
+                else if ( cur_symbol->type == OP )
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#09752e\", label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, ptr_data->operators_array[ cur_symbol->object.operation - 1 ] );
+                else if ( cur_symbol->type == VAR )
+                    printf ( "Error in node %p: the tree ends with VAR\n", node );
             }
-    }
+        }
+    if ( node->left != NULL )
+        create_dot_code ( node->left, ptr_data, ptr_dot_file );
 
+    if ( node->right != NULL )
+        create_dot_code ( node->right, ptr_data, ptr_dot_file );
 //fprintf ( stderr, "HUI1\n");
-    branch_connector ( ptr_data->g_root, ptr_data, ptr_dot_file );
 //fprintf ( stderr, "HUI2\n");
-    fprintf ( ptr_dot_file, "}\n" );
 
     return DONE;
 }

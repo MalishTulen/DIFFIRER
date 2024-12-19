@@ -36,17 +36,15 @@ enum leaf_t
 enum operations_t
 {
     POISON_OPERATION  = -1,
-    ADD               = 1,
+    SUM               = 1,
     SUB               = 2,
     MUL               = 3,
     DIV               = 4,
     EXP               = 5,
     SQR               = 6,
-    SIN               = 7,
-    COS               = 8,
-    TG                = 9,
-    CTG               = 10,
-
+    LN                = 7,
+    SIN               = 8,
+    COS               = 9,
 };
 
 union object_t
@@ -126,22 +124,10 @@ const node_t ERROR_NODE = { .type = POISON_TYPE };
 
 errors_t start_programm     ();
 errors_t read_file          ( tree_t* tree, int* amount_of_pictures );
-errors_t tree_ctor          ( tree_t* ptr_tree );
-errors_t tree_checker       ( tree_t* ptr );
-leaf_t   check_if_leaf      ( node_t* ptr_node );
-errors_t reader             ( FILE* ptr_input_file, input_file_t* ptr_input_data );
-node_t*  create_new_node    ( tree_t* ptr_tree, type_t type, object_t object, node_t* left, node_t* right );
-errors_t array_dump         ( tree_t* tree, node_t* node );
-errors_t improover_of_expression ( tree_t* ptr_tree );
-node_t*  improver_of_node   ( node_t* node, int* amount_of_improves );
-errors_t delete_sub_tree    ( node_t* node );
-errors_t delete_node        ( node_t* node );
-double   get_value          ( double left, double right, operations_t operation );
 errors_t differer           ( tree_t* tree );
 node_t*  differenciation    ( tree_t* tree, node_t* node );
 errors_t get_string         ( tree_t* tree );
 node_t*  get_symbol         ( node_t* node );
 errors_t printf_operation   ( node_t* node );
-node_t*  copy_sons_balls    ( tree_t* tree, node_t* node );
 
 #endif
