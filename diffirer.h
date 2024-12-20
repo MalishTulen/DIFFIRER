@@ -4,7 +4,7 @@
 
 const int               POISON_VALUE        = -66;
 const int               MAX_NAME_LEN        = 30;
-const int               DATA_CAPACITY       = 300;
+const int               DATA_CAPACITY       = 1000;
 const int               MAX_INPUT_LENGTH    = 50;
 const int               CMD_COMMAND_LEN     = 50;
 const int               VARS_ARRAY_CAPACITY = 20;

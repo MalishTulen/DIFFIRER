@@ -6,11 +6,14 @@
 #include <assert.h>
 #include <ctype.h>
 
+#define TAYLOR
+
 #include "diffirer.h"
 #include "tree.h"
 #include "grafic_print.h"
 #include "schitivalka.h"
 #include "improver.h"
+#include "taylor.h"
 
 errors_t start_programm ()
 {
@@ -30,52 +33,76 @@ errors_t start_programm ()
 
 errors_t read_file ( tree_t* tree, int* amount_of_pictures )
 {
+    #ifdef TAYLOR
+        int decomposition_amount = 0;
+
+        printf ( "INSERT AMOUNT OF DECOMPOSITIONS:" );
+        if ( scanf ( "%d", &decomposition_amount ) != 1 )
+            return STOP;
+    #endif
     FILE *input_file = fopen ( "input_file.txt", "r" );
 
     input_file_t data = {};
-    input_file_t* input_data = &data; // TODO: remove nah
+    input_file_t* input_data = &data;
 
 //fprintf ( stderr, "READFILE1\n" );
     /*if (system ("rm -rf IMAGES_FOLDER && mkdir IMAGES_FOLDER") == 0)
         printf ( "Folder with images created!\n" );*/
 
-    struct stat file_info = {};                     // TODO: func get_file_size
+    struct stat file_info = {};
     fstat ( fileno ( input_file ), &file_info );
 //fprintf ( stderr, "size = %ld\n", file_info.st_size );
     input_data->size = ( file_info.st_size );
 //fprintf ( stderr, "READFILE2\n" );
 
+
     input_data->data = ( char* ) calloc ( input_data->size, sizeof ( char ) );
 
     reader ( input_file, input_data );
 
-    printf ( "DATA: %s\n", input_data->data );
-
 //fprintf ( stderr, "READFILE3\n" );
-    create_tree_from_input_data ( input_data, tree ); // TODO: zaebal
+    create_tree_from_input_data ( input_data, tree );
 
     make_grafic_dump ( tree, amount_of_pictures );
 
     improover_of_expression ( tree );
 
 fprintf ( stderr, "IMPROOVED!\n" );
-    make_grafic_dump ( tree, amount_of_pictures );
+    #ifdef TAYLOR
+        taylor ( tree, amount_of_pictures, decomposition_amount );
+    #else
+        make_grafic_dump ( tree, amount_of_pictures );
 
-    get_string ( tree ); // TODO: print
+        get_string ( tree );
 
-    differer ( tree );
+        differer ( tree );
 
-    make_grafic_dump ( tree, amount_of_pictures );
+        make_grafic_dump ( tree, amount_of_pictures );
 
-    improover_of_expression ( tree );
+        improover_of_expression ( tree );
 
-fprintf ( stderr, "DIFFERING!\n" );
+    fprintf ( stderr, "DIFFERING!\n" );
 
-    //array_dump ( tree, tree->g_root );
+        //array_dump ( tree, tree->g_root );
 
-    make_grafic_dump ( tree, amount_of_pictures );
+        make_grafic_dump ( tree, amount_of_pictures );
 
-    get_string ( tree );
+        get_string ( tree );
+
+    fprintf ( stderr, "SECOND DIFFERING!\n" );
+
+        differer ( tree );
+
+        make_grafic_dump ( tree, amount_of_pictures );
+
+    fprintf ( stderr, "IMPROVING!\n" );
+
+        improover_of_expression ( tree );
+
+        make_grafic_dump ( tree, amount_of_pictures );
+
+        get_string ( tree );
+    #endif
 
     return DONE;
 }
@@ -153,7 +180,7 @@ node_t* differenciation ( tree_t* tree, node_t* node )
 
                 if ( node->right->type == NUM )
                 {
-fprintf ( stderr, "1 VARIANT\n" );
+//fprintf ( stderr, "1 VARIANT\n" );
                     node->object.operation = MUL;
                     delete_sub_tree ( node->left );
                     node->left = create_new_node ( tree, OP, {.operation = MUL }, copy_left, copy_node );
@@ -163,18 +190,18 @@ fprintf ( stderr, "1 VARIANT\n" );
 
                 else if ( node->left->type == NUM && node->right->type != NUM )
                 {
-fprintf ( stderr, "2 VARIANT\n" );
+//fprintf ( stderr, "2 VARIANT\n" );
                     node->object.operation = MUL;
                     delete_sub_tree ( node->right );
                     delete_node ( copy_left );
-array_dump ( tree, copy_left );
+//array_dump ( tree, copy_left );
                     node->right = create_new_node ( tree, OP, {.operation = LN }, NULL, node->left );
                     node->left = create_new_node ( tree, OP, {.operation = MUL }, copy_node, copy_right );
                 }
 
                 else if ( node->left->type != NUM && node->right->type != NUM )
                 {
-fprintf ( stderr, "3 VARIANT\n" );
+//fprintf ( stderr, "3 VARIANT\n" );
 //array_dump ( tree, copy_node );
 //array_dump ( tree, copy_left );
                     node->object.operation = MUL;
@@ -182,19 +209,19 @@ fprintf ( stderr, "3 VARIANT\n" );
                     node_t* ln_node = create_new_node ( tree, OP, {.operation = LN }, NULL, node->left );
                     node_t* copy_ln_node = copy_sons_balls ( tree, ln_node );
                     node->left = copy_node;
-fprintf ( stderr, "DEBUG1\n" );
+//fprintf ( stderr, "DEBUG1\n" );
 
-fprintf ( stderr, "DEBUG1.2\nCOPYLN_NODE:\n" );
-array_dump ( tree, copy_ln_node );
+//fprintf ( stderr, "DEBUG1.2\nCOPYLN_NODE:\n" );
+//array_dump ( tree, copy_ln_node );
                     differenciation ( tree, copy_ln_node );
 
 
-fprintf ( stderr, "DEBUG2\nLNNODE:\n" );
+//fprintf ( stderr, "DEBUG2\nLNNODE:\n" );
                     node_t* nodeRL = create_new_node ( tree, OP, {.operation = MUL }, copy_right, ln_node );
                     node_t* nodeRR = create_new_node ( tree, OP, {.operation = MUL }, node->right, copy_ln_node );
-fprintf ( stderr, "DEBUG3\nNODE88:\n" );
+//fprintf ( stderr, "DEBUG3\nNODE88:\n" );
                     node->right = create_new_node ( tree, OP, {.operation = SUM }, nodeRL, nodeRR );
-fprintf ( stderr, "DEBUG4\n" );
+//fprintf ( stderr, "DEBUG4\n" );
                 }
 
                 break;

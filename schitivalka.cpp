@@ -10,7 +10,7 @@ errors_t create_tree_from_input_data ( input_file_t* input_data, tree_t* tree )
 {
     int p = 0;
     tree->g_root = get_dollar ( input_data, tree, &p );
-fprintf ( stderr, "Groot = %p\n", tree->g_root );
+//fprintf ( stderr, "Groot = %p\n", tree->g_root );
     array_dump ( tree, tree->g_root );
 
     return DONE;
@@ -19,9 +19,9 @@ fprintf ( stderr, "Groot = %p\n", tree->g_root );
 node_t* get_dollar ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-fprintf ( stderr, "DOLLAR SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "DOLLAR SCANNER = %c\n", daata [ *p ] );
     node_t* value = get_sum ( input_data, tree, p );
-fprintf ( stderr, "DOLLAR SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "DOLLAR SCANNER = %c\n", daata [ *p ] );
 
     if ( daata [ *p ] != '$' )
     {
@@ -35,9 +35,9 @@ fprintf ( stderr, "DOLLAR SCANNER = %c\n", daata [ *p ] );
 node_t* get_sum ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-fprintf ( stderr, "SUM SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "SUM SCANNER = %c\n", daata [ *p ] );
     node_t* value = get_mul ( input_data, tree, p );
-fprintf ( stderr, "SUM SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "SUM SCANNER = %c\n", daata [ *p ] );
     node_t* value3 = NULL;
     int checker = 0;
     while ( ( daata [ *p ] == '+' ) || ( daata [ *p ] == '-' ) )
@@ -75,9 +75,9 @@ fprintf ( stderr, "SUM SCANNER = %c\n", daata [ *p ] );
 node_t* get_mul ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-fprintf ( stderr, "MUL SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "MUL SCANNER = %c\n", daata [ *p ] );
     node_t* value = get_exp ( input_data, tree, p );
-fprintf ( stderr, "MUL SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "MUL SCANNER = %c\n", daata [ *p ] );
     node_t* value3 = NULL;
     int checker = 0;
     while ( ( daata [ *p ] == '*' ) || ( daata [ *p ] == '/' ) )
@@ -114,9 +114,9 @@ fprintf ( stderr, "MUL SCANNER = %c\n", daata [ *p ] );
 node_t* get_exp ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-fprintf ( stderr, "EXP SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "EXP SCANNER = %c\n", daata [ *p ] );
     node_t* value = get_log_or_sin_or_cos ( input_data, tree, p );
-fprintf ( stderr, "EXP SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "EXP SCANNER = %c\n", daata [ *p ] );
 
 node_t* value3 = NULL;
     int checker = 0;
@@ -156,7 +156,7 @@ node_t* get_log_or_sin_or_cos ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
 
-fprintf ( stderr, "LOG SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "LOG SCANNER = %c\n", daata [ *p ] );
 
     if ( daata  [ *p ] == 'L' )
     {
@@ -189,7 +189,7 @@ fprintf ( stderr, "LOG SCANNER = %c\n", daata [ *p ] );
 node_t* get_brackets ( input_file_t* input_data, tree_t* tree, int* p )
 {
     char* daata = input_data->data;
-fprintf ( stderr, "BRACKETS SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "BRACKETS SCANNER = %c\n", daata [ *p ] );
 
     if ( daata [ *p ] == '(' )
     {
@@ -215,7 +215,7 @@ node_t* get_number ( input_file_t* input_data, tree_t* tree, int* p )
     int num_checker = 0;
     object_t value = {};
     char* daata = input_data->data;
-fprintf ( stderr, "CONST SCANNER = %c\n", daata [ *p ] );
+//fprintf ( stderr, "CONST SCANNER = %c\n", daata [ *p ] );
 
 
     if ( '0' <= daata [ *p ] && daata [ *p ] <= '9' )

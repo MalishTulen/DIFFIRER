@@ -47,11 +47,11 @@ errors_t create_dot_code ( node_t* node, tree_t* ptr_data, FILE* ptr_dot_file )
             if ( cur_symbol->type != POISON_TYPE )
             {
                 if ( cur_symbol->type == NUM ) // TODO: switch-case
-                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = bold, color = \"#580612\", label = \" { <f2> %lf | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.constant );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record, style = filled, color = \"#f45e58\", label = \" { <f2> %lf | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.constant );
                 else if ( cur_symbol->type == OP )
                     printf ( "Error in node %p : the tree ends with OP\n", node );
                 else if ( cur_symbol->type == VAR )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#5b63e0\", penwidth = 2.0, label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.var );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = filled, color = \"#4fa4ef\", penwidth = 2.0, label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, cur_symbol->object.var );
             }
         }
         else if ( checker_if_leaf == NOT_LEAF )
@@ -61,7 +61,7 @@ errors_t create_dot_code ( node_t* node, tree_t* ptr_data, FILE* ptr_dot_file )
                 if ( cur_symbol->type == NUM )
                     printf ( "Error in node %p: the tree ends with NUM\n", node );
                 else if ( cur_symbol->type == OP )
-                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = bold, color = \"#09752e\", label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, ptr_data->operators_array[ cur_symbol->object.operation - 1 ] );
+                    fprintf ( ptr_dot_file, "node%p[ shape = record,style = filled, color = \"#64f458\", label = \" { <f2> %c | { <f3> LEFT | <f4> RIGHT } } \"];\n", cur_symbol, ptr_data->operators_array[ cur_symbol->object.operation - 1 ] );
                 else if ( cur_symbol->type == VAR )
                     printf ( "Error in node %p: the tree ends with VAR\n", node );
             }
